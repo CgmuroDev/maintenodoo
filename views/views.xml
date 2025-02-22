@@ -1,0 +1,60 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+<!--
+    <record model="ir.ui.view" id="maintenodoo.list">
+      <field name="name">maintenodoo list</field>
+      <field name="model">maintenodoo.maintenodoo</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+-->
+
+    <!-- actions opening views on models -->
+<!--
+    <record model="ir.actions.act_window" id="maintenodoo.action_window">
+      <field name="name">maintenodoo window</field>
+      <field name="res_model">maintenodoo.maintenodoo</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+-->
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="maintenodoo.action_server">
+      <field name="name">maintenodoo server</field>
+      <field name="model_id" ref="model_maintenodoo_maintenodoo"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+<!--
+    <menuitem name="maintenodoo" id="maintenodoo.menu_root"/>
+-->
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="maintenodoo.menu_1" parent="maintenodoo.menu_root"/>
+    <menuitem name="Menu 2" id="maintenodoo.menu_2" parent="maintenodoo.menu_root"/>
+-->
+    <!-- actions -->
+<!--
+    <menuitem name="List" id="maintenodoo.menu_1_list" parent="maintenodoo.menu_1"
+              action="maintenodoo.action_window"/>
+    <menuitem name="Server to list" id="maintenodoo" parent="maintenodoo.menu_2"
+              action="maintenodoo.action_server"/>
+-->
+  </data>
+</odoo>

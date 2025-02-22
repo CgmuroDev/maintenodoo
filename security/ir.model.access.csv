@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+
+access_maintenodoo_equipment,maintenodoo.equipment,model_maintenodoo_equipment,group_mantenimiento_user,1,0,0,0
+access_maintenodoo_equipment_manager,maintenodoo.equipment,model_maintenodoo_equipment,group_mantenimiento_category_admin,1,1,1,1
+
+access_maintenodoo_mantenimiento,maintenodoo.mantenimiento,model_maintenodoo_mantenimiento,group_mantenimiento_user,1,0,0,0
+access_maintenodoo_mantenimiento_manager,maintenodoo.mantenimiento,model_maintenodoo_mantenimiento,group_mantenimiento_category_admin,1,1,1,1
+
+access_maintenodoo_tecnico,maintenodoo.tecnico,model_maintenodoo_tecnico,group_mantenimiento_user,1,0,0,0
+access_maintenodoo_tecnico_manager,maintenodoo.tecnico,model_maintenodoo_tecnico,group_mantenimiento_category_admin,1,1,1,1

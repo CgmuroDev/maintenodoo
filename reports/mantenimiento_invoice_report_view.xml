@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="action_mantenimiento_template" model="ir.actions.report">
+            <field name="name">Mantenimiento PDF</field>
+            <field name="model">maintenodoo.equipment</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">maintenodoo.report_custom_invoice</field>
+            <field name="report_file">maintenodoo.report_custom_invoice</field>
+            <field name="attachment">'original_mantenimiento_report.pdf'</field>
+            <field name="attachment_use">False</field>
+            <field name="paperformat_id" ref="custom_mantenimiento_paperformat"/>ata
+            <field name="binding_model_id" ref="model_maintenodoo_equipment"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <template id="report_custom_invoice">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+
+                        <div class="page">
+
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <h2>Ficha Técnica de Equipo</h2>
+                                    <h3>Referencia:
+                                        <span t-field="o.name"/>
+                                    </h3>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <h4>Información General</h4>
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <td class="table-active" width="30%">Categoría</td>
+                                            <td width="70%">
+                                                <span t-field="o.category"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="table-active">Estado</td>
+                                            <td>
+                                                <span t-field="o.state"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="table-active">Responsable</td>
+                                            <td>
+                                                <span t-field="o.responsible_id"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <h4>Fechas Importantes</h4>
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <td class="table-active" width="30%">Fecha de Instalación</td>
+                                            <td width="70%">
+                                                <span t-field="o.installation_date"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="table-active">Último Mantenimiento</td>
+                                            <td>
+                                                <span t-field="o.last_maintenance"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <h4>Historial de Mantenimientos</h4>
+                                    <table class="table table-bordered table-sm">
+                                        <thead>
+                                            <tr class="table-active">
+                                                <th>Referencia</th>
+                                                <th>Fecha</th>
+                                                <th>Fecha Ejecución</th>
+                                                <th>Notas</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr t-foreach="o.maintenance_ids" t-as="maint">
+                                                <td>
+                                                    <span t-field="maint.name"/>
+                                                </td>
+                                                <td>
+                                                    <span t-field="maint.programed_date"/>
+                                                </td>
+                                                <td>
+                                                    <span t-field="maint.executed_date"/>
+                                                </td>
+                                                <td>
+                                                    <span t-field="maint.notes"/>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="row mt-6">
+                                <div class="col-12 text-center">
+                                    <h4>Resumen por Categorías</h4>
+                                    <div>
+                                        <img t-if="o.indicator_result_behavior_graph"
+                                             t-att-src="image_data_uri(o.indicator_result_behavior_graph)"
+                                             alt="Gráfico de Categorías"/>
+                                        <p t-if="not o.indicator_result_behavior_graph">
+                                            No hay datos para mostrar el gráfico.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-5">
+                                <div class="col-6 text-center">
+                                    <p>____________________</p>
+                                    <p>Responsable del Equipo</p>
+                                    <p>
+                                        <span t-field="o.responsible_id.name"/>
+                                    </p>
+                                </div>
+                                <div class="col-6 text-center">
+                                    <p>____________________</p>
+                                    <p>Supervisor</p>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+
+        <template id="report_mantenimiento_document_index">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Resumen de Mantenimientos</h2>
+                        <table class="table table-sm table-bordered" style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr>
+                                    <th>Fecha Programada</th>
+                                    <th>Fecha Ejecutada</th>
+                                    <th>Equipo</th>
+                                    <th>Técnicos Asignados</th>
+                                    <th>Notas</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="docs" t-as="doc">
+                                    <tr>
+                                        <td>
+                                            <span t-field="doc.programed_date"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="doc.executed_date"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="doc.equipment_id.name"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="doc.technician_ids"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="doc.notes"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+
+    </data>
+</odoo>

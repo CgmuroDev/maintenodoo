@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="equipo_sequence" model="ir.sequence">
+            <field name="name">Equipo secuencia</field>
+            <field name="code">maintenodoo.equipo</field>
+            <field name="prefix">EQ/</field>
+            <field name="padding">4</field>
+            <field name="number_next">1</field>
+        </record>
+
+    </data>
+</odoo>
