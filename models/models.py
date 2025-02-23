@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 class Equipment(models.Model):
     _name = 'maintenodoo.equipment'
     _description = 'Equipo de Mantenimiento'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'mail.followers']
 
     name = fields.Char(string='Nombre', default=lambda self: 'New')
     category = fields.Selection(
@@ -77,7 +77,7 @@ class Equipment(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            if vals.get('name') == 'New':
+            if vals.get('name', 'New') == 'New':
                 vals['name'] = self.env['ir.sequence'].next_by_code('maintenodoo.equipo') or 'New'
         return super().create(vals_list)
 
@@ -188,10 +188,4 @@ class Tecnico(models.Model):
 class ResUserExtend(models.Model):
     _inherit = 'res.users'
 
-    maintenance_ids = fields.Many2many(
-        'maintenodoo.mantenimiento',
-        string='Mantenimientos Asignados',
-        relation='user_maintenance_rel',
-        column1='user_id',
-        column2='maintenance_id'
-    )
+    maintenance_ids = fields.One2many('maintenodoo.tecnico', 'user_id', string='Mantenimientos')
