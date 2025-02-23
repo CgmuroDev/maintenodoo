@@ -10,7 +10,7 @@
             <field name="report_file">maintenodoo.report_custom_invoice</field>
             <field name="attachment">'original_mantenimiento_report.pdf'</field>
             <field name="attachment_use">False</field>
-            <field name="paperformat_id" ref="custom_mantenimiento_paperformat"/>ata
+            <field name="paperformat_id" ref="custom_mantenimiento_paperformat"/>
             <field name="binding_model_id" ref="model_maintenodoo_equipment"/>
             <field name="binding_type">report</field>
         </record>

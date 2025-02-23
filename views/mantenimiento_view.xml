@@ -22,7 +22,7 @@
                                 <field name="equipment_id" widget="many2one_avatar"/>
                             </group>
                             <group>
-                                Select a la moneda:
+                                <label for="currency_id" string="Selecciona la moneda:"/>
                                 <field name="currency_id"/>
                             </group>
                         </group>

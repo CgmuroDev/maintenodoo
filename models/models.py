@@ -151,7 +151,7 @@ class Mantenimiento(models.Model):
                         if tecnico.user_id and tecnico.user_id.partner_id:
                             mail = self.env['mail.mail'].create({
                                 'body_html': f'<p>Tienes un mantenimiento programado para el equipo <b>{equipo}</b> el día <b>{tomorrow}</b>.</p>',
-                                'email_to': [(4, tecnico.user_id.partner_id.email)],
+                                'email_to': tecnico.user_id.partner_id.email,
                                 'email_cc': self.env.user.partner_id.email,
                             })
                             mail.send()
