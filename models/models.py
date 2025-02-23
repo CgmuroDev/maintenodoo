@@ -134,31 +134,31 @@ class Mantenimiento(models.Model):
     @api.model
     def cron_notificar_mantenimientos(self):
         logger.info('Ejecutando Cron Job de Notificación de Mantenimientos')
-
         try:
             today = fields.Date.today()
-            tomorrow = today + timedelta(days=1)
-
-            mantenimientos = self.search([
-                ('programed_date', '=', tomorrow),
-            ])
-
+            target_date = today + timedelta(days=1)
+            mantenimientos = self.search([('programed_date', '=', target_date)])
             if mantenimientos:
                 for mantenimiento in mantenimientos:
                     equipo = mantenimiento.equipment_id.name
-
                     for tecnico in mantenimiento.technician_ids:
                         if tecnico.user_id and tecnico.user_id.partner_id:
-                            mail = self.env['mail.mail'].create({
-                                'body_html': f'<p>Tienes un mantenimiento programado para el equipo <b>{equipo}</b> el día <b>{tomorrow}</b>.</p>',
-                                'email_to': tecnico.user_id.partner_id.email,
-                                'email_cc': self.env.user.partner_id.email,
-                            })
-                            mail.send()
-
-                            logger.info(
-                                f'Notificación enviada al técnico {tecnico.user_id.name} para el mantenimiento del equipo {equipo}.'
-                            )
+                            email_to = tecnico.user_id.partner_id.email
+                            if email_to:
+                                mail = self.env['mail.mail'].create({
+                                    'subject': f'Mantenimiento programado para el {target_date}',
+                                    'body_html': (
+                                        f'<p>Estimado {tecnico.user_id.name},</p>'
+                                        f'<p>Tienes un mantenimiento programado para el equipo <b>{equipo}</b> el día <b>{target_date}</b>.</p>'
+                                        '<p>Por favor, prepara el equipo para su mantenimiento.</p>'
+                                    ),
+                                    'email_to': email_to,
+                                    'email_cc': self.env.user.partner_id.email,
+                                })
+                                mail.send()
+                                logger.info(
+                                    f'Notificación enviada al técnico {tecnico.user_id.name} para el mantenimiento del equipo {equipo}.'
+                                )
         except Exception as e:
             logger.error(f'Error en cron_notificar_mantenimientos: {e}')
 
@@ -168,6 +168,12 @@ class Mantenimiento(models.Model):
             if vals.get('name', 'New') == 'New':
                 vals['name'] = self.env['ir.sequence'].next_by_code('maintenodoo.mantenimiento') or 'New'
         return super().create(vals_list)
+
+    @api.constrains('equipment_id')
+    def _check_equipment_active(self):
+        for record in self:
+            if record.equipment_id.state == 'inactivo':
+                raise ValidationError("No se puede crear mantenimiento para un equipo inactivo.")
 
 
 class Tecnico(models.Model):
