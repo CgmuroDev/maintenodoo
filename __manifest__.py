@@ -31,6 +31,7 @@ Long description of module's purpose
         'views/menu_root.xml',
         'views/equipo_view.xml',
         'views/mantenimiento_view.xml',
+        'views/user_inherit_view.xml',
         'views/views.xml',
         'views/templates.xml',
     ],
