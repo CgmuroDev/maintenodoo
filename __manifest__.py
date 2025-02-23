@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "maintenodoo",
+    'name': "Mantenimiento",
 
     'summary': "Short (1 phrase/line) summary of the module's purpose",
 
@@ -38,4 +38,6 @@ Long description of module's purpose
     'demo': [
         'demo/demo.xml',
     ],
+    'installable': True,
+    'application': True,
 }
