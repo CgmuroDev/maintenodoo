@@ -131,7 +131,7 @@
             <field name="context">{}</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
-                    No hay mantenimientos programados. Haz clic aquí para agregar un nuevo mantenimiento.
+                    No hay mantenimientos programados.
                 </p>
             </field>
         </record>
