@@ -7,7 +7,7 @@ from io import BytesIO
 from datetime import datetime, timedelta
 import logging
 
-from odoo.tools.populate import compute
+
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ class Equipment(models.Model):
     _description = 'Equipo de Mantenimiento'
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
-    name = fields.Char(string='Nombre', default=lambda self: 'New')
+    name = fields.Char(string='Nombre', default=lambda self: 'New', readonly=True, copy=False)
     category = fields.Selection(
         [('electronic', 'Electrónico'), ('mechanical', 'Mecánico'), ('hydraulic', 'Hidráulico')],
         string='Categoría', required=True

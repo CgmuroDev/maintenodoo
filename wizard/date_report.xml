@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="mantenimento_wizard" model="ir.ui.view">
+            <field name="name">mantenodoo.date.report.wizard.form</field>
+            <field name="model">maintenodoo.date.report.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Reporte de mantenimiento">
+                    <group>
+                        <field name="start_date"/>
+                        <field name="end_date"/>
+                    </group>
+                    <separator string="Mantenimientos"/>
+                    <field name="mantenimientos_ids"/>
+                    <footer>
+                        <button name="print_report" string="Imprimir" type="object" class="btn-primary"/>
+                        <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                    </footer>
+
+                </form>
+            </field>
+        </record>
+
+
+        <record id="action_equipo" model="ir.actions.act_window">
+            <field name="name">Reporte Fecha</field>
+            <field name="res_model">maintenodoo.date.report.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="model_maintenodoo_mantenimiento"/>
+
+
+        </record>
+
+        <menuitem id="menu_equipo" name="Reportar entre fechas" parent="maintenodoo_menu" action="action_equipo"/>
+    </data>
+</odoo>

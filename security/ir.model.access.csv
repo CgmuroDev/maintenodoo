@@ -8,3 +8,7 @@ access_maintenodoo_mantenimiento_manager,maintenodoo.mantenimiento,model_mainten
 
 access_maintenodoo_tecnico,maintenodoo.tecnico,model_maintenodoo_tecnico,group_mantenimiento_user,1,0,0,0
 access_maintenodoo_tecnico_manager,maintenodoo.tecnico,model_maintenodoo_tecnico,group_mantenimiento_category_admin,1,1,1,1
+
+
+access_maintenodoo_date_report_wizard,maintenodoo.date.report.wizard,model_maintenodoo_date_report_wizard,group_mantenimiento_user,1,0,0,0
+access_maintenodoo_date_report_wizard_manager,maintenodoo.date.report.wizard,model_maintenodoo_date_report_wizard,group_mantenimiento_category_admin,1,1,1,1

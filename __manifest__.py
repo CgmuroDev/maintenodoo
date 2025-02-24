@@ -34,6 +34,7 @@ Long description of module's purpose
         'views/user_inherit_view.xml',
         'views/views.xml',
         'views/templates.xml',
+        'wizard/date_report.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

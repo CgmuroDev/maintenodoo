@@ -3,15 +3,28 @@
     <data>
 
         <record id="action_mantenimiento_template" model="ir.actions.report">
-            <field name="name">Mantenimiento PDF</field>
+            <field name="name">Equipos PDF</field>
             <field name="model">maintenodoo.equipment</field>
             <field name="report_type">qweb-pdf</field>
             <field name="report_name">maintenodoo.report_custom_invoice</field>
             <field name="report_file">maintenodoo.report_custom_invoice</field>
-            <field name="attachment">'original_mantenimiento_report.pdf'</field>
+            <field name="attachment">'original_equipo_report.pdf'</field>
             <field name="attachment_use">False</field>
             <field name="paperformat_id" ref="custom_mantenimiento_paperformat"/>
             <field name="binding_model_id" ref="model_maintenodoo_equipment"/>
+            <field name="binding_type">report</field>
+        </record>
+
+         <record id="action_mantenimiento_template" model="ir.actions.report">
+            <field name="name">Resumen de Mantenimientos</field>
+            <field name="model">maintenodoo.mantenimiento</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">maintenodoo.report_mantenimiento_document_index</field>
+            <field name="report_file">maintenodoo.report_mantenimiento_document_index</field>
+            <field name="attachment">'original_mantenimiento_report.pdf'</field>
+            <field name="attachment_use">False</field>
+            <field name="paperformat_id" ref="custom_mantenimiento_paperformat"/>
+            <field name="binding_model_id" ref="model_maintenodoo_mantenimiento"/>
             <field name="binding_type">report</field>
         </record>
 
