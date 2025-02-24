@@ -1,131 +1,129 @@
-from odoo.tests.common import TransactionCase
+from odoo.tests import TransactionCase, tagged
+from odoo.exceptions import ValidationError
+from datetime import date, timedelta
+import logging
 
-class TestMantenimiento(TransactionCase):
-    test_tags = ['standard', 'at_install', 'post_install']
+_logger = logging.getLogger(__name__)
 
+
+@tagged('post_install', '-at_install')
+class TestEquipment(TransactionCase):
     def setUp(self):
-        super(TestMantenimiento, self).setUp()
-        self.equipment_model = self.env['maintenodoo.equipment']
-        self.mantenimiento_model = self.env['maintenodoo.mantenimiento']
+        super().setUp()
+        self.Equipment = self.env['maintenodoo.equipment']
+        self.user = self.env.ref('base.user_admin')
 
-    def test_create_equipment(self):
-        equipment = self.equipment_model.create({
-            'name': 'Equipo de Prueba',
+
+        self.equipment1 = self.Equipment.create({
+            'name': 'Equipo Test 1',
             'category': 'electronic',
-            'installation_date': '2023-01-01',
-            'state': 'activo',
+            'installation_date': date.today(),
+            'state': 'activo'
         })
-        self.assertEqual(equipment.name, 'Equipo de Prueba')
-        self.assertEqual(equipment.category, 'electronic')
-        self.assertEqual(equipment.state, 'activo')
 
-    def test_create_mantenimiento(self):
-        equipment = self.equipment_model.create({
-            'name': 'Equipo de Prueba',
-            'category': 'electronic',
-            'installation_date': '2023-01-01',
-            'state': 'activo',
-        })
-        mantenimiento = self.mantenimiento_model.create({
-            'equipment_id': equipment.id,
-            'programed_date': '2023-02-01',
-            'executed_date': '2023-02-02',
-            'notes': 'Mantenimiento de prueba',
-        })
-        self.assertEqual(mantenimiento.equipment_id.id, equipment.id)
-        self.assertEqual(mantenimiento.programed_date, '2023-02-01')
-        self.assertEqual(mantenimiento.executed_date, '2023-02-02')
-        self.assertEqual(mantenimiento.notes, 'Mantenimiento de prueba')
+    def test_equipment_creation(self):
 
-    def create_equipment_with_invalid_state_raises_error(self):
+        self.assertEqual(self.equipment1.state, 'activo')
+        self.assertEqual(self.equipment1.category, 'electronic')
+
+    def test_state_constraint(self):
+
         with self.assertRaises(ValidationError):
-            self.equipment_model.create({
-                'name': 'Equipo de Prueba',
-                'category': 'electronic',
-                'state': 'reparacion',
+            self.equipment1.write({'state': 'reparacion'})
+
+    def test_compute_indicator_graph(self):
+
+        self.equipment1._compute_indicator_result_behavior()
+        self.assertTrue(self.equipment1.indicator_result_behavior_graph)
+
+
+@tagged('post_install', '-at_install')
+class TestMaintenance(TransactionCase):
+    def setUp(self):
+        super().setUp()
+
+        self.Maintenance = self.env['maintenodoo.mantenimiento']
+        self.Equipment = self.env['maintenodoo.equipment']
+        self.user = self.env.ref('base.user_admin')
+
+
+        self.equipment = self.Equipment.create({
+            'name': 'Equipo Test',
+            'category': 'mechanical',
+            'installation_date': date.today(),
+            'state': 'activo'
+        })
+
+    def test_maintenance_creation(self):
+
+        maintenance = self.Maintenance.create({
+            'equipment_id': self.equipment.id,
+            'programed_date': date.today() + timedelta(days=1)
+        })
+
+        self.assertEqual(maintenance.validity, 0)
+        self.assertTrue(maintenance.name != 'New')
+
+    def test_validity_calculation(self):
+
+        maintenance = self.Maintenance.create({
+            'equipment_id': self.equipment.id,
+            'programed_date': date(2024, 1, 1),
+            'executed_date': date(2024, 1, 5)
+        })
+
+        self.assertEqual(maintenance.validity, 4)
+
+    def test_cost_calculation(self):
+
+        maintenance = self.Maintenance.create({
+            'equipment_id': self.equipment.id,
+            'programed_date': date.today(),
+            'executed_date': date.today() + timedelta(days=5),
+            'costo_por_dia': 100.0
+        })
+
+        self.assertEqual(maintenance.costo_por_diario, 500.0)
+
+    def test_inactive_equipment_constraint(self):
+
+        self.equipment.write({'state': 'inactivo'})
+
+        with self.assertRaises(ValidationError):
+            self.Maintenance.create({
+                'equipment_id': self.equipment.id,
+                'programed_date': date.today()
             })
 
-    def compute_indicator_result_behavior_graph_with_data(self):
-        equipment = self.equipment_model.create({
-            'name': 'Equipo de Prueba',
-            'category': 'electronic',
-        })
-        equipment._compute_indicator_result_behavior()
-        self.assertTrue(equipment.indicator_result_behavior_graph)
+    def test_cron_notification(self):
 
-    def compute_indicator_result_behavior_graph_without_data(self):
-        equipment = self.equipment_model.create({
-            'name': 'Equipo de Prueba',
-            'category': 'electronic',
+        maintenance = self.Maintenance.create({
+            'equipment_id': self.equipment.id,
+            'programed_date': date.today() + timedelta(days=1)
         })
-        self.env['maintenodoo.equipment'].search([]).unlink()
-        equipment._compute_indicator_result_behavior()
-        self.assertFalse(equipment.indicator_result_behavior_graph)
 
-    def create_maintenance_with_default_name(self):
-        equipment = self.equipment_model.create({
-            'name': 'Equipo de Prueba',
-            'category': 'electronic',
-        })
-        maintenance = self.mantenimiento_model.create({
-            'equipment_id': equipment.id,
-            'programed_date': fields.Date.today(),
-        })
-        self.assertNotEqual(maintenance.name, 'New')
 
-    def compute_validity(self):
-        equipment = self.equipment_model.create({
-            'name': 'Equipo de Prueba',
-            'category': 'electronic',
-        })
-        maintenance = self.mantenimiento_model.create({
-            'equipment_id': equipment.id,
-            'programed_date': fields.Date.today(),
-            'executed_date': fields.Date.today() + timedelta(days=5),
-        })
-        self.assertEqual(maintenance.validity, 5)
+        self.Maintenance.cron_notificar_mantenimientos()
 
-    def inverse_validity(self):
-        equipment = self.equipment_model.create({
-            'name': 'Equipo de Prueba',
-            'category': 'electronic',
-        })
-        maintenance = self.mantenimiento_model.create({
-            'equipment_id': equipment.id,
-            'programed_date': fields.Date.today(),
-        })
-        maintenance.validity = 5
-        self.assertEqual(maintenance.executed_date, fields.Date.today() + timedelta(days=5))
 
-    def calculate_costo(self):
-        equipment = self.equipment_model.create({
-            'name': 'Equipo de Prueba',
-            'category': 'electronic',
-        })
-        maintenance = self.mantenimiento_model.create({
-            'equipment_id': equipment.id,
-            'programed_date': fields.Date.today(),
-            'validity': 5,
-        })
-        self.assertEqual(maintenance.costo_por_diario, 250.0)
+        emails = self.env['mail.mail'].search([
+            ('subject', 'ilike', 'Mantenimiento programado')
+        ])
 
-    def cron_notificar_mantenimientos(self):
-        equipment = self.equipment_model.create({
-            'name': 'Equipo de Prueba',
-            'category': 'electronic',
+        self.assertTrue(len(emails) > 0)
+
+
+@tagged('post_install', '-at_install')
+class TestTechnician(TransactionCase):
+    def setUp(self):
+        super().setUp()
+        self.Technician = self.env['maintenodoo.tecnico']
+        self.user = self.env.ref('base.user_demo')
+
+    def test_technician_creation(self):
+
+        technician = self.Technician.create({
+            'user_id': self.user.id
         })
-        user = self.env['res.users'].create({
-            'name': 'Test User',
-            'login': 'testuser',
-            'email': 'testuser@example.com',
-        })
-        maintenance = self.mantenimiento_model.create({
-            'equipment_id': equipment.id,
-            'programed_date': fields.Date.today() + timedelta(days=1),
-        })
-        self.env['maintenodoo.tecnico'].create({
-            'maintenance_id': maintenance.id,
-            'user_id': user.id,
-        })
-        self.mantenimiento_model.cron_notificar_mantenimientos()
-        # Check logs or email sending logic here
+
+        self.assertEqual(technician.user_id, self.user)
