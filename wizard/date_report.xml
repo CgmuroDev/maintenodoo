@@ -12,9 +12,10 @@
                         <field name="end_date"/>
                     </group>
                     <separator string="Mantenimientos"/>
-                    <field name="mantenimientos_ids"/>
+                    <field name="mantenimientos_ids" options="{'no_create': True}"/>
+
                     <footer>
-                        <button name="print_report" string="Imprimir" type="object" class="btn-primary"/>
+                        <button name="print_report" string="Imprimir" type="object" class="oe_highlight"/>
                         <button string="Cancelar" class="btn-secondary" special="cancel"/>
                     </footer>
 

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="report_mantenimiento_fecha" model="ir.actions.report">
+            <field name="name">Reporte de Mantenimiento por Fecha</field>
+            <field name="model">maintenodoo.date.report.wizard</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">maintenodoo.report_mantenimiento_fecha_view</field>
+            <field name="report_file">maintenodoo.report_mantenimiento_fecha</field>
+            <field name="binding_model_id" ref="model_maintenodoo_date_report_wizard"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <template id="report_mantenimiento_fecha_view">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <h2>Reporte de Mantenimiento por Fecha</h2>
+                            <p>Fecha de inicio:
+                                <t t-esc="doc.start_date"/>
+                            </p>
+                            <p>Fecha de fin:
+                                <t t-esc="doc.end_date"/>
+                            </p>
+
+                            <h3>Mantenimientos</h3>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Referencia</th>
+                                        <th>Equipo</th>
+                                        <th>Fecha Programada</th>
+                                        <th>Fecha de Ejecución</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-if="doc.mantenimientos_ids">
+                                        <t t-foreach="doc.mantenimientos_ids" t-as="mantenimiento">
+                                            <tr>
+                                                <td>
+                                                    <t t-esc="mantenimiento.name"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="mantenimiento.equipment_id.name"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="mantenimiento.programed_date"/>
+                                                </td>
+                                                <td>
+                                                    <t t-esc="mantenimiento.executed_date"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </t>
+                                    <t t-if="not doc.mantenimientos_ids">
+                                        <tr>
+                                            <td colspan="4">No se encontraron mantenimientos en el rango de fechas.</td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>
