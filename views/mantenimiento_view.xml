@@ -108,12 +108,15 @@
                     <field name="name"/>
                     <field name="equipment_id"/>
                     <field name="programed_date"/>
+                    <field name="executed_date"/>
                     <filter string="Programados Hoy" name="hoy" domain="[('programed_date', '=', context_today())]"/>
                     <filter string="Pendientes" name="pendientes" domain="[('executed_date', '=', False)]"/>
+                    <filter string="Fecha Programada" name="programed_date_filter" domain="[]" context="{'group_by': 'programed_date'}"/>
+                    <filter string="Fecha de Ejecución" name="executed_date_filter" domain="[]" context="{'group_by': 'executed_date'}"/>
                     <group expand="1" string="Agrupar por">
-                        <filter string="Fecha Programada" name="programed_date"
-                                context="{'group_by': 'programed_date'}"/>
-                        <filter string="Equipo" name="equipment_id" context="{'group_by': 'equipment_id'}"/>
+                        <filter string="Fecha Programada" name="programed_date_group" context="{'group_by': 'programed_date'}"/>
+                        <filter string="Fecha de Ejecución" name="executed_date_group" context="{'group_by': 'executed_date'}"/>
+                        <filter string="Equipo" name="equipment_id_group" context="{'group_by': 'equipment_id'}"/>
                     </group>
                 </search>
             </field>
