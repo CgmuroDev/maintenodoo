@@ -89,7 +89,7 @@ class Mantenimiento(models.Model):
     equipment_id = fields.Many2one('maintenodoo.equipment', string='Equipo', required=True, ondelete='cascade')
     programed_date = fields.Date(string='Fecha Programada', required=True)
     executed_date = fields.Date(string='Fecha de Ejecución')
-    technician_ids = fields.One2many('maintenodoo.tecnico', 'maintenance_id', string='Técnicos', ondelete='cascade')
+    technician_ids = fields.One2many('maintenodoo.tecnico', 'maintenance_id', string='Técnicos', ondelete='cascade', store=True)
     notes = fields.Text(string='Notas')
     validity = fields.Integer(
         string='Días restantes',
@@ -97,6 +97,7 @@ class Mantenimiento(models.Model):
         inverse='_inverse_validity',
         default=0
     )
+
     costo_por_dia = fields.Float(string='Costo por Día en Pesos', default=50.0, readonly=True)
     costo_por_diario = fields.Monetary(string='Costo Total', readonly=True, compute='_calculate_costo',
                                        currency_field='currency_id')
